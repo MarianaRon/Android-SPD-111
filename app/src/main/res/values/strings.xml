@@ -3,6 +3,7 @@
     <!--MAIN ACTIVITY- -->
     <string name="main_tv_title">Основи АндроЇд</string>
     <string name="main_btn_calc">Калькулятор</string>
+    <string name="main_btn_game">Свайпи. Гра</string>
 
     <!-- CALC ACTIVITY-->
     <string name="calc_tv_title">Calculator</string>
@@ -31,7 +32,11 @@
     <string name="calc_btn_7">7</string>
     <string name="calc_btn_8">8</string>
     <string name="calc_btn_9">9</string>
+    <string name="calc_limit_exceeded">limit_exceeded</string>
+    <string name="calc_zero_division">Division by zero</string>
+    <!-- region GAME ACTIVITY-->
 
+    <!-- ENDREGION-->
 
 </resources>
 

@@ -23,16 +23,23 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         findViewById(R.id.main_btn_calc).setOnClickListener(this::onCalcButtonClick);
+        findViewById(R.id.main_btn_game).setOnClickListener(this::onGameButtonClick);
     }
+
+    //ЗБРЕРЕГТИ АКТИВНІСТЬ
+    //РОБИТЬСЯ СПЕЦ Intent В ЯКИЙ ПЕРЕДАЄТЬСЯ КОНТЕКСТ
+    // В ЯКОМУ ВІДБУВАЄТЬСЯ ЗАПУСК- this ТА ЩО МИ
+    // ХОЧЕМО ЗАПУСТИТИ CalcActivity.class
     private void onCalcButtonClick(View view)
     {
-        //ЗБРЕРЕГТИ АКТИВНІСТЬ
-        //РОБИТЬСЯ СПЕЦ Intent В ЯКИЙ ПЕРЕДАЄТЬСЯ КОНТЕКСТ
-        // В ЯКОМУ ВІДБУВАЄТЬСЯ ЗАПУСК- this ТА ЩО МИ
-        // ХОЧЕМО ЗАПУСТИТИ CalcActivity.class
         Intent intent = new Intent(this, CalcActivity.class);
         //ПРОСИМО СИСТЕМУ ЗАПУСТИТИ intent
         startActivity(intent);
-
+    }
+    private void onGameButtonClick(View view)
+    {
+        Intent intent = new Intent(this, GameActivity.class);
+        //ПРОСИМО СИСТЕМУ ЗАПУСТИТИ intent
+        startActivity(intent);
     }
 }
