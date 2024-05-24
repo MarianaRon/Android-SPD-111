@@ -3,7 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 <!--MAIN ACTIVITY -->
-    <color name="main_bg">#ECA09A</color>
+    <color name="main_bg">#EFCAC7</color>
     <color name="main_btn_bg">#350B24</color>
     <color name="main_btn_fg">#EDE2EF</color>
 
@@ -12,7 +12,7 @@
     <color name="calc_fg">#FEFEFE</color>
     <color name="calc_func_bg">#323232</color>
     <color name="calc_digit_bg">#383838</color>
-    <color name="calc_equal_bg">#4CC1FF</color>
+    <color name="calc_equal_bg">#53A8D5</color>
     <color name="calc_history_fg">#9B9B9B</color>
     <color name="calc_result_bg_land">#292929</color>
 <!--GAME ACTIVITY-->

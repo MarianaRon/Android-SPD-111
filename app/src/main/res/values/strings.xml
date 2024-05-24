@@ -4,6 +4,13 @@
     <string name="main_tv_title">Основи АндроЇд</string>
     <string name="main_btn_calc">Калькулятор</string>
     <string name="main_btn_game">Свайпи. Гра</string>
+    <string name="main_btn_chat">Мережа. Чат</string>
+
+    <!-- CHAT ACTIVITY-->
+    <string name="chat_title">Chat</string>
+    <string name="chat_scroller_description">Chat messages</string>
+
+
 
     <!-- CALC ACTIVITY-->
     <string name="calc_tv_title">Calculator</string>
