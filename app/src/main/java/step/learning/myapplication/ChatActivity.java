@@ -50,9 +50,6 @@ import step.learning.myapplication.orm.ChatResponse;
 public class ChatActivity extends AppCompatActivity {
     private static final String CHAT_URL = "https://chat.momentfor.fun/";
     private  final  byte[] buffer = new  byte[8096];
-
-    //паралельні запити до кількох ресурсів не працюють, виконується  лише один
-    //це обмежує вибір виконання сервісу.
     ExecutorService executorService = Executors.newSingleThreadExecutor();
     private boolean isEditTextDisabled = false;
     private EditText etNik;
@@ -89,13 +86,8 @@ private MediaPlayer newMessageSound;
         newMessageSound = MediaPlayer.create(this, R.raw.pickup);
 ////////////////////////
         newMessageSound = MediaPlayer.create(this, R.raw.pickup);
-        //newMessageSound.setLooping(true);
-        //newMessageSound.start();
-        // Найдите ImageButton в макете
         toggleSoundButton = findViewById(R.id.toggle_sound_button);
-        // Установите слушатель кликов для ImageButton
         toggleSoundButton.setOnClickListener(this::onToggleSoundClick);
-        // Обновите изображение кнопки в зависимости от текущего состояния звука
         updateButtonImage();
 ///////////////////////
         findViewById(R.id.chat_iv_logo).setOnClickListener(this::onSendClick);
@@ -104,31 +96,26 @@ private MediaPlayer newMessageSound;
 
     //////////
     private void onToggleSoundClick(View view) {
-        // Переключаем состояние звука
         if (isMuted) {
             unmute();
         } else {
             mute();
         }
 
-        // Обновляем флаг состояния
         isMuted = !isMuted;
-
-        // Обновите изображение кнопки после изменения состояния
         updateButtonImage();
     }
     private void mute() {
-        // Выключаем звук медиаплеера
         newMessageSound.setVolume(0, 0);
     }
 
     private void unmute() {
-        // Включаем звук медиаплеера
+
         newMessageSound.setVolume(1, 1);
     }
 
     private void updateButtonImage() {
-        // Обновите изображение кнопки в зависимости от текущего состояния звука
+
         if (isMuted) {
             toggleSoundButton.setImageResource(android.R.drawable.ic_lock_silent_mode);
         } else {
@@ -163,10 +150,7 @@ private MediaPlayer newMessageSound;
 
     }
     private void onSendClick( View v ) {
-        /////
-        // Проверяем, отключен ли уже EditText
         if (!isEditTextDisabled) {
-            // Сделать EditText неактивным
             etNik.setEnabled(false);
 
             // Обновить флаг состояния
