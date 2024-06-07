@@ -1,8 +1,12 @@
 package step.learning.myapplication;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +22,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
-private static final int FIELD_WIDTH = 16;
+    private static final int FIELD_WIDTH = 16;
     private static final int FIELD_HEIGHT = 24;
 
 
@@ -34,7 +38,7 @@ private static final int FIELD_WIDTH = 16;
     private static  final String food = new String (Character.toChars(0x1F34E));
     private Vector2 foodPosition;
     private static final Random _random = new Random();
-
+    private Animation opacityAnimation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +49,8 @@ private static final int FIELD_WIDTH = 16;
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        //
+        opacityAnimation = AnimationUtils.loadAnimation(this, R.anim.opacity);
+        // додаємо аналізатор (слухач) свайпів на всю активність (R.id.main)
         findViewById(R.id.main).setOnTouchListener(new OnSwipeListener(this) {
             @Override
             public void onSwipeBottom() {
@@ -70,45 +75,42 @@ private static final int FIELD_WIDTH = 16;
         initField();
         newGame();
     }
-    private  void  step(){
-        if (! isPlaying) return;
-        Vector2 tail = snake.getLast();
+    private void step() {
+        if(! isPlaying) return;
+
         Vector2 head = snake.getFirst();
         Vector2 newHead = new Vector2(head.x, head.y);
-       // newHead.y -= 1;
-        switch (moveDirection){
+        switch (moveDirection) {
             case bottom: newHead.y += 1; break;
             case left:   newHead.x -= 1; break;
             case right:  newHead.x += 1; break;
             case top:    newHead.y -= 1; break;
         }
-        if(isCellInSnake(newHead)){
+        if( newHead.x < 0 || newHead.x >= FIELD_WIDTH ||
+                newHead.y < 0 || newHead.y >= FIELD_HEIGHT ) {
             gameOver();
             return;
         }
-        if (newHead.x < 0 || newHead.x  >= FIELD_WIDTH ||
-             newHead.y < 0 || newHead.y >= FIELD_HEIGHT){
-            gameOver();
-            return;
-        }
-        if (newHead.x == foodPosition.x && newHead.y == foodPosition.y){
-            //видовження - не прибирати хвіст
-            // перенести їжу але не на змійку
+        if( newHead.x == foodPosition.x && newHead.y == foodPosition.y ) {
+            // видовження - не прибирати хвіст
+            // перенести їжу але щоб не на змійку
             gameField[foodPosition.x][foodPosition.y].setText("");
-            do{
+            do {
                 foodPosition = Vector2.random();
-            } while(isCellInSnake(foodPosition));
+            } while( isCellInSnake( foodPosition ) ) ;
             gameField[foodPosition.x][foodPosition.y].setText(food);
-
+            gameField[foodPosition.x][foodPosition.y].startAnimation(opacityAnimation);
         }
-        else{
+        else {
+            Vector2 tail = snake.getLast();
             snake.remove(tail);
-            gameField[tail.x][tail.y].setBackgroundColor(fieldColor);
+            gameField[tail.x][tail.y].setBackgroundColor( fieldColor );
         }
-        snake.addFirst(newHead);
-        gameField[newHead.x][newHead.y].setBackgroundColor(snakedColor);
 
-        handler.postDelayed(this::step, 700);
+        snake.addFirst(newHead);
+        gameField[newHead.x][newHead.y].setBackgroundColor( snakedColor );
+
+        handler.postDelayed( this::step, 700);
     }
     private  boolean isCellInSnake(Vector2 cell){
         for(Vector2 v:snake){

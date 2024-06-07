@@ -5,11 +5,23 @@
     <string name="main_btn_calc">Калькулятор</string>
     <string name="main_btn_game">Свайпи. Гра</string>
     <string name="main_btn_chat">Мережа. Чат</string>
+    <string name="main_btn_anim">Анімації </string>
 
     <!-- CHAT ACTIVITY-->
     <string name="chat_title">Chat</string>
     <string name="chat_scroller_description">Chat messages</string>
 
+    <!-- endregion -->
+
+    <!-- region ANIM ACTIVITY -->
+    <string name="anim_title">Анімації</string> Opacity
+    <string name="anim_opacity_title">Прозорість</string>
+    <string name="anim_size_title">Розмір</string>
+    <string name="anim_arc_title">Обертання</string>
+    <string name="anim_move_title">Переміщення</string>
+    <string name="anim_combo_title">Комбінація</string>
+
+    <!-- endregion -->
 
 
     <!-- CALC ACTIVITY-->
@@ -42,6 +54,7 @@
     <string name="calc_limit_exceeded">limit_exceeded</string>
     <string name="calc_zero_division">Division by zero</string>
     <!-- region GAME ACTIVITY-->
+
 
     <!-- ENDREGION-->
 

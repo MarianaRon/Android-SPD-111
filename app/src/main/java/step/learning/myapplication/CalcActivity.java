@@ -3,6 +3,8 @@ package step.learning.myapplication;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +23,7 @@ public class CalcActivity extends AppCompatActivity {
     private static Double num1;
     private static Double num2;
     private Character operand;
+    private Animation clickAnimation;
 
     @SuppressLint("DiscouragedApi")
     @Override
@@ -33,11 +36,14 @@ public class CalcActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        clickAnimation = AnimationUtils.loadAnimation(this,R.anim.calc);
         tvHistory = findViewById(R.id.calc_tv_histoty);
         tvResult = findViewById(R.id.calc_tv_result);
-        if( savedInstanceState ==null){//
+        if( savedInstanceState ==null){//немає збереженого стану - перший запуск
             tvResult.setText("0");
         }
+           /* Задача: циклом перебрати ресурсні кнопки calc_btn_{i} і для
+           кожної з них поставити один обробник onDigitButtonClick */
         for (int i = 0; i < 10; i++){
             findViewById(//на заміну R.id.calc_btn_0 проходить наступний вираз
                     getResources().getIdentifier( //R
@@ -53,12 +59,12 @@ public class CalcActivity extends AppCompatActivity {
         findViewById(R.id.calc_btn_backspace).setOnClickListener(this::onBackspaceClick);
         findViewById(R.id.calc_btn_inverse).setOnClickListener(this::onInverseClick);
 
-
         findViewById(R.id.calc_btn_point).setOnClickListener(this::onPointClick);
 
 
     }
     private void onPercentClick(View view) {
+        view.startAnimation(clickAnimation); //применение анимации
         String result = tvResult.getText().toString();
         double x = Double.parseDouble(result);
         if(num1 != null){
@@ -73,11 +79,13 @@ public class CalcActivity extends AppCompatActivity {
     }
 
     private void on_CE_Click(View view) {
+        view.startAnimation(clickAnimation); //анимация
         tvResult.setText("0");
     }
 
 
     private void on_C_Click(View view) {
+        view.startAnimation(clickAnimation); //анимация
         tvResult.setText("0");
         tvHistory.setText("");
 
@@ -88,6 +96,7 @@ public class CalcActivity extends AppCompatActivity {
     }
 
     private void onBackspaceClick(View view) {
+        view.startAnimation(clickAnimation); //анимация
         String result = tvResult.getText().toString();
         if(!result.isEmpty()){
             result = result.substring(0, result.length() - 1);
@@ -98,6 +107,7 @@ public class CalcActivity extends AppCompatActivity {
         tvResult.setText(result);
     }
     private void onInverseClick(View view) {
+        view.startAnimation(clickAnimation); //анимация
         String result = tvResult.getText().toString();
         double x = Double.parseDouble(result);
         if(x == 0) {
@@ -115,6 +125,7 @@ public class CalcActivity extends AppCompatActivity {
         tvResult.setText( str );
     }
     private void onPointClick(View view) {
+        view.startAnimation(clickAnimation); //анимация
         String result = tvResult.getText().toString();
         if (result.contains(".")) {
             return;
@@ -132,8 +143,15 @@ public class CalcActivity extends AppCompatActivity {
 
     /*  ПРИ ПОВОРОТАХ ЄКРАНУ (зміна конфігурації пристрою)
 
-    *
-    */
+    При зміні конфігурації пристрою (поворотах, змінах налаштувань, тощо) відбувається
+    перезапуск активності. При цьому подаються події життєвого циклу
+    onSaveInstanceState - при виході з активності перед перезапуском
+    onRestoreInstanceState - при відновленні активності після перезапуску
+    До обробників передається Bundle, що є сховищем, яке дозволяє зберегти та відновити дані
+    Також збережений Bundle передається до onCreate, що дозволяє визначити
+     чи це перший запуск, чи перезапуск через зміну конфігурації
+     */
+
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {

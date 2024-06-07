@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -50,6 +52,9 @@ import step.learning.myapplication.orm.ChatResponse;
 public class ChatActivity extends AppCompatActivity {
     private static final String CHAT_URL = "https://chat.momentfor.fun/";
     private  final  byte[] buffer = new  byte[8096];
+
+    //паралельні запити до кількох ресурсів не працюють, виконується  лише один
+    //це обмежує вибір виконання сервісу.
     ExecutorService executorService = Executors.newSingleThreadExecutor();
     private boolean isEditTextDisabled = false;
     private EditText etNik;
@@ -62,6 +67,8 @@ private MediaPlayer newMessageSound;
     private Handler handler = new Handler();
     private ImageButton toggleSoundButton;
     private boolean isMuted = false;
+    private Animation clickAnimation;
+    private Animation clickAnimation2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +79,8 @@ private MediaPlayer newMessageSound;
            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        clickAnimation = AnimationUtils.loadAnimation(this,R.anim.chat_move);
+        clickAnimation2 = AnimationUtils.loadAnimation(this,R.anim.chat_opacity);
         updateChat();
 
         urlToImageView(
@@ -86,36 +95,47 @@ private MediaPlayer newMessageSound;
         newMessageSound = MediaPlayer.create(this, R.raw.pickup);
 ////////////////////////
         newMessageSound = MediaPlayer.create(this, R.raw.pickup);
+        //newMessageSound.setLooping(true);
+        //newMessageSound.start();
+        // Найдите ImageButton в макете
         toggleSoundButton = findViewById(R.id.toggle_sound_button);
+        // Установите слушатель кликов для ImageButton
         toggleSoundButton.setOnClickListener(this::onToggleSoundClick);
-        updateButtonImage();
+        // Обновите изображение кнопки в зависимости от текущего состояния звука
 ///////////////////////
+        updateButtonImage();
+
         findViewById(R.id.chat_iv_logo).setOnClickListener(this::onSendClick);
         container.setOnClickListener((v) -> hideSoftInput());
     }
 
     //////////
     private void onToggleSoundClick(View view) {
+        // Переключаем состояние звука
         if (isMuted) {
             unmute();
         } else {
             mute();
         }
 
+        // Обновляем флаг состояния
         isMuted = !isMuted;
+
+        // Обновите изображение кнопки после изменения состояния
         updateButtonImage();
     }
     private void mute() {
+        // Выключаем звук медиаплеера
         newMessageSound.setVolume(0, 0);
     }
 
     private void unmute() {
-
+        // Включаем звук медиаплеера
         newMessageSound.setVolume(1, 1);
     }
 
     private void updateButtonImage() {
-
+        // Обновите изображение кнопки в зависимости от текущего состояния звука
         if (isMuted) {
             toggleSoundButton.setImageResource(android.R.drawable.ic_lock_silent_mode);
         } else {
@@ -139,7 +159,6 @@ private MediaPlayer newMessageSound;
 
     private void updateChat(){
         if (executorService.isShutdown())return;
-
             CompletableFuture
                     .supplyAsync(this::loadChat, executorService)
                     .thenApplyAsync(this::processChatResponse)
@@ -150,7 +169,28 @@ private MediaPlayer newMessageSound;
 
     }
     private void onSendClick( View v ) {
+        v.startAnimation(clickAnimation);
+        clickAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                v.startAnimation(clickAnimation2);
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        /////
+        // Проверяем, отключен ли уже EditText
         if (!isEditTextDisabled) {
+            // Сделать EditText неактивным
             etNik.setEnabled(false);
 
             // Обновить флаг состояния
@@ -165,6 +205,7 @@ private MediaPlayer newMessageSound;
         etMessage.setText("");
         ///
 
+
         if( author.isEmpty() ) {
             Toast.makeText(this, "Заповніть 'Нік'", Toast.LENGTH_SHORT).show();
             return;
@@ -178,8 +219,10 @@ private MediaPlayer newMessageSound;
         chatMessage.setText(message);
 
         CompletableFuture
-                .runAsync(()->sendChatMessage(chatMessage), executorService);
+                .runAsync(() -> sendChatMessage(chatMessage), executorService);
+    }
 
+    private void sendChatMessage(ChatMessage chatMessage){
       /*
         Необхідно сформувати POST_запит на URL чату та передати дані форми з
         полями author та msg з відповідними значеннями з chatMessage
@@ -240,9 +283,7 @@ private MediaPlayer newMessageSound;
     }
 //////////////////
 
-    private  void  sendChatMessage(ChatMessage chatMessage){
 
-    }
 
     private boolean processChatResponse( String response ) {
         boolean wasNewMessage  = false;
@@ -384,9 +425,12 @@ private MediaPlayer newMessageSound;
                 message.setView(messageLayout);
                 ////////////////
             }
-           // chatScroller.fullScroll(View.FOCUS_DOWN);
-            //Асинхронність андроід
-            //прокрутка діятиме лише на поточне наповнення контейнера
+
+              /*
+            chatScroller.fullScroll(View.FOCUS_DOWN);
+            Асинхронність Android призводить до того, що на момент команди не всі представлення,
+            додані до контейнера, вже сформовані. Прокрутка діятиме лише на поточне наповнення контейнера.
+             */
             chatScroller.post(//передача дії, яка виконається після поточної черги
                  ()->chatScroller.fullScroll(View.FOCUS_DOWN)
             );
